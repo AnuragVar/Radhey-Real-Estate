@@ -1,8 +1,10 @@
 import bcryptjs from "bcryptjs";
 
 import { User } from "../models/user.models.js";
+import { nextTick } from "process";
+import { ApiError } from "../utils/ApiError.js";
 
-const signup = async function (req, res) {
+const signup = async function (req, res, next) {
   const { userName, email, password } = req.body;
 
   const hassedPassword = bcryptjs.hashSync(password, 10);
@@ -12,7 +14,7 @@ const signup = async function (req, res) {
     await newUser.save();
     res.status(200).json("User created successfully");
   } catch (error) {
-    res.status(500).json(error.message || "Something went wrong!!");
+    next(new ApiError(500, error.message || "Something wents wrong!!"));
   }
 };
 export { signup };
