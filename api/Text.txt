@@ -1,0 +1,8 @@
+//setup frontend
+//add tailwind
+//add routers
+//layout
+//setup backend
+//connect to the database
+//install express and mongoose
+//connect database through mongoose
