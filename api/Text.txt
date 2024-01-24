@@ -6,3 +6,6 @@
 //connect to the database
 //install express and mongoose
 //connect database through mongoose
+//making env, putting mongodb connection string
+//models
+//
