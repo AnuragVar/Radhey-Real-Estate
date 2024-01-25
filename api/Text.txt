@@ -9,3 +9,5 @@
 //making env, putting mongodb connection string
 //models
 //
+
+//if key and value both are same in object, then we can remove any one
