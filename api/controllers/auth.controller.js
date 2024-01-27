@@ -4,6 +4,10 @@ import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+const options = {
+  httpOnly: true,
+  secure: true,
+};
 const signup = async function (req, res, next) {
   const { userName, email, password } = req.body;
   console.log(email, password, userName);
@@ -59,10 +63,6 @@ export const signIn = async function (req, res, next) {
       process.env.JWT_SECRET_TOKEN,
       { expiresIn: "2d" }
     );
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
 
     const { password: pass, ...info } = existedUser._doc;
     res
@@ -72,5 +72,62 @@ export const signIn = async function (req, res, next) {
   } catch (error) {
     // throw new ApiError(500, error.message || "Something wrong happens!!");
     next(error);
+  }
+};
+
+export const signInThroughGoogle = async (req, res, next) => {
+  try {
+    console.log(1);
+
+    const { userName, email, photo } = req.body;
+
+    const existedUser = await User.findOne({
+      email,
+    });
+    if (existedUser) {
+      const token = jwt.sign(
+        { id: existedUser._id },
+        process.env.JWT_SECRET_TOKEN,
+        { expiresIn: "2d" }
+      );
+
+      console.log(existedUser);
+      const { password, ...info } = existedUser._doc;
+
+      res
+        .cookie("access_token", token, options)
+        .status(200)
+        .json(new ApiResponse(200, info, "user is logged successfully"));
+    } else {
+      const generatePassword =
+        Math.random.toString(36).slice(-8) + Math.random.toString(36).slice(-8);
+      const hassedPassword = bcryptjs.hashSync(generatePassword, 10);
+      const newUser = await User.create({
+        userName:
+          userName.split(" ").join("").toLowerCase() +
+          Math.random.toString(36).slice(-4),
+        email,
+        password: hassedPassword,
+        avatar: req.body.photo,
+      });
+      await newUser.save();
+      console.log("newuser", newUser);
+      const token = jwt.sign(
+        { id: newUser._id },
+        process.env.JWT_SECRET_TOKEN,
+        {
+          expiresIn: "2d",
+        }
+      );
+
+      const { password, ...info } = newUser._doc;
+
+      res
+        .cookie("access_token", token, options)
+        .status(200)
+        .json(new ApiResponse(200, info, "user is logged successfully"));
+    }
+  } catch (error) {
+    throw new ApiError(500, error?.message);
   }
 };
