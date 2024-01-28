@@ -8,6 +8,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { updateFailure, updateStart, updateSuccess } from "../redux/userSlice";
 function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
@@ -16,7 +17,7 @@ function Profile() {
   const [formData, setFormData] = useState({});
   const fileref = useRef(null);
   const dispatch = useDispatch();
-
+  console.log(formData);
   // console.log(file);
   // console.log(filePerc);
   // console.log(fileUploadError);
@@ -59,20 +60,29 @@ function Profile() {
     setFormData((formData) => ({ ...formData, [e.target.id]: e.target.value }));
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(e) {
+    e.preventDefault();
     try {
-      const result = fetch(`/api/auth/profile/${currentUser._id}`, {
-        method: "PATCH",
+      dispatch(updateStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        data: JSON.stringify(formData),
+        body: JSON.stringify(formData),
       });
-      const data = await result.json();
+      console.log(res);
+      console.log(1);
+      const data = await res.json();
+      console.log(data);
+      console.log(2);
       if (data.success === false) {
-        dis;
+        dispatch(updateFailure(data.message));
       }
-    } catch (error) {}
+      dispatch(updateSuccess(data.data));
+    } catch (error) {
+      dispatch(updateFailure(error.message));
+    }
   }
 
   return (
@@ -103,6 +113,7 @@ function Profile() {
           type="text"
           placeholder="username"
           id="userName"
+          defaultValue={currentUser.userName}
           className="p-3 border rounded-lg"
           onChange={(e) => handleChange(e)}
         />
@@ -111,10 +122,11 @@ function Profile() {
           placeholder="email"
           id="email"
           className="p-3 border rounded-lg"
+          defaultValue={currentUser.email}
           onChange={(e) => handleChange(e)}
         />
         <input
-          type="text"
+          type="password"
           placeholder="password"
           id="password"
           className="p-3 border rounded-lg"
@@ -137,12 +149,3 @@ function Profile() {
 }
 
 export default Profile;
-
-function delay(ms) {
-  const promise = new Promise(function (resolve, reject) {
-    setTimeout(() => resolve(), ms);
-  });
-  return promise;
-}
-
-delay(3000).then(() => alert("runs after 3 seconds"));

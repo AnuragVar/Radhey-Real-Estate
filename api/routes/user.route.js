@@ -4,7 +4,6 @@ import { verifyJWT } from "../utils/verifyJWT.js";
 
 const router = Router();
 
-router.get("/test", test);
-export default router;
+router.get("/test", test).post("/update/:id", verifyJWT, userUpdate);
 
-router.patch("/update/:id", verifyJWT, userUpdate);
+export default router;

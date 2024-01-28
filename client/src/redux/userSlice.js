@@ -39,6 +39,13 @@ export const userSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { signInFailure, signInStart, signInSuccess } = userSlice.actions;
+export const {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+  updateFailure,
+  updateStart,
+  updateSuccess,
+} = userSlice.actions;
 
 export default userSlice.reducer;
