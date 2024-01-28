@@ -10,7 +10,10 @@ function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   function handleChange(e) {
-    setFormData((formData) => ({ ...formData, [e.target.id]: e.target.value }));
+    setFormData((formData) => ({
+      ...formData,
+      [e.target.id]: e.target.value,
+    }));
   }
   async function handleSubmit(e) {
     try {

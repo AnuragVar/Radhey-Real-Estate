@@ -11,6 +11,7 @@ export const userSlice = createSlice({
   reducers: {
     signInStart: (state) => {
       state.loading = true;
+      state.error = null;
     },
     signInSuccess: (state, action) => {
       state.loading = false;
@@ -18,6 +19,19 @@ export const userSlice = createSlice({
       state.currentUser = action.payload;
     },
     signInFailure: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    updateStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    updateSuccess: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.currentUser = action.payload;
+    },
+    updateFailure: (state, action) => {
       state.error = action.payload;
       state.loading = false;
     },
