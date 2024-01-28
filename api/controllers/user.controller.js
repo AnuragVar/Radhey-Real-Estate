@@ -8,12 +8,12 @@ export const test = function (req, res) {
 };
 
 export const userUpdate = async (req, res, next) => {
-  console.log(1);
-  if (req.user.id !== req.params.id) {
-    throw new ApiError("You can only update your own account!!");
-  }
-  console.log("hi");
   try {
+    console.log(req.user.id, req.params.id);
+    if (req.user.id !== req.params.id) {
+      throw new ApiError(400, "You can only update your own account!!");
+    }
+    console.log("hi");
     if (req.body.password) {
       req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
@@ -43,4 +43,27 @@ export const userUpdate = async (req, res, next) => {
     next(error);
     return;
   }
+};
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id)
+    throw new ApiError(400, "You are not authorized to do it!!");
+
+  try {
+    await User.findByIdAndDelete(req.user.id);
+  } catch (error) {
+    throw new ApiError(500, "something wents wrong!!");
+  }
+  console.log(11);
+  res.clearCookie("access_token");
+  res.status(200).json(new ApiResponse(200, "User deleted Successfully"));
+};
+
+export const signOut = (req, res, next) => {
+  if (req.user.id !== req.params.id)
+    throw new ApiError(400, "You don't access to signOut it!!");
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "User is logged out successfully!!"));
 };

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   getDownloadURL,
   getStorage,
@@ -8,7 +8,18 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
-import { updateFailure, updateStart, updateSuccess } from "../redux/userSlice";
+import {
+  deleteFailure,
+  deleteStart,
+  deleteSuccess,
+  signInSuccess,
+  signOutFailure,
+  signOutStart,
+  signOutSuccess,
+  updateFailure,
+  updateStart,
+  updateSuccess,
+} from "../redux/userSlice";
 function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
@@ -32,7 +43,6 @@ function Profile() {
     //tell which storage we are talking about
     const fileName = new Date().getTime() + file;
     //name the file
-
     const storageRef = ref(storage, fileName);
 
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -60,6 +70,38 @@ function Profile() {
     setFormData((formData) => ({ ...formData, [e.target.id]: e.target.value }));
   }
 
+  async function handleSignOut() {
+    try {
+      dispatch(signOutStart());
+      const res = await fetch(`/api/user/sign-out/${currentUser._id}`, {
+        method: "GET",
+      });
+      const data = await res.json();
+
+      if (data.success === "false") {
+        dispatch(signOutFailure(data.message));
+      }
+      dispatch(signInSuccess());
+    } catch (error) {
+      dispatch(signOutFailure(error.message));
+    }
+  }
+  async function handleDelete() {
+    try {
+      dispatch(deleteStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteFailure("Something went wrong while deleting User"));
+      }
+
+      dispatch(deleteSuccess());
+    } catch (error) {
+      dispatch(deleteFailure(error.message));
+    }
+  }
   async function handleSubmit(e) {
     e.preventDefault();
     try {
@@ -71,11 +113,7 @@ function Profile() {
         },
         body: JSON.stringify(formData),
       });
-      console.log(res);
-      console.log(1);
       const data = await res.json();
-      console.log(data);
-      console.log(2);
       if (data.success === false) {
         dispatch(updateFailure(data.message));
       }
@@ -106,9 +144,9 @@ function Profile() {
           <p className="text-red-700 self-center">File is not uploading</p>
         ) : filePerc > 0 && filePerc < 100 ? (
           <p className="text-green-700 self-center">Uploading {filePerc}%</p>
-        ) : (
+        ) : filePerc !== 0 ? (
           <p className="text-green-700 self-center">Successfully Uploaded</p>
-        )}
+        ) : null}
         <input
           type="text"
           placeholder="username"
@@ -139,8 +177,12 @@ function Profile() {
           {loading ? "Loading..." : "Update"}
         </button>
         <div className="flex justify-between text-red-700 ">
-          <p>Delete Account</p>
-          <p>Sign Out</p>
+          <p className="cursor-pointer" onClick={() => handleDelete()}>
+            Delete Account
+          </p>
+          <p className="cursor-pointer" onClick={() => handleSignOut()}>
+            Sign Out
+          </p>
         </div>
         {error && <p className="text-red-700 text-lg">{error}</p>}
       </form>
