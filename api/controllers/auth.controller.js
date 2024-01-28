@@ -11,8 +11,6 @@ const options = {
 const signup = async function (req, res, next) {
   try {
     const { userName, email, password } = req.body;
-    console.log(email, password, userName);
-    console.log(email, password, userName);
 
     if ([userName, email, password].some((field) => !field?.trim())) {
       console.log(2);
@@ -49,7 +47,6 @@ export { signup };
 
 export const signIn = async function (req, res, next) {
   try {
-    console.log(req.body);
     const { email, password, userName } = req.body;
     //taking credentials from body
     //validate them - empty, email format
@@ -58,7 +55,6 @@ export const signIn = async function (req, res, next) {
     //assigning a token to them
     //findOne
     //
-    console.log(email, password, userName);
     if (!email && !userName)
       throw new ApiError(400, "Atleast email or username is required!!!");
     // if ([email, userName, password].some((field) => field?.trim() === "")) {
@@ -70,7 +66,6 @@ export const signIn = async function (req, res, next) {
       // userName,
     });
 
-    console.log(existedUser);
     if (!existedUser) throw new ApiError(400, "User doesn't exist");
 
     const isValidPassword = bcryptjs.compareSync(
@@ -99,8 +94,6 @@ export const signIn = async function (req, res, next) {
 
 export const signInThroughGoogle = async (req, res, next) => {
   try {
-    console.log(1);
-
     const { userName, email, photo } = req.body;
 
     const existedUser = await User.findOne({
@@ -113,7 +106,6 @@ export const signInThroughGoogle = async (req, res, next) => {
         { expiresIn: "2d" }
       );
 
-      console.log(existedUser);
       const { password, ...info } = existedUser._doc;
 
       res
@@ -133,7 +125,6 @@ export const signInThroughGoogle = async (req, res, next) => {
         avatar: req.body.photo,
       });
       await newUser.save();
-      console.log("newuser", newUser);
       const token = jwt.sign(
         { id: newUser._id },
         process.env.JWT_SECRET_TOKEN,

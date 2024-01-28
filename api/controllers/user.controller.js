@@ -9,7 +9,7 @@ export const test = function (req, res) {
 
 export const userUpdate = async (req, res, next) => {
   try {
-    console.log(req.user.id, req.params.id);
+    // console.log(req.user.id, req.params.id);
     if (req.user.id !== req.params.id) {
       throw new ApiError(400, "You can only update your own account!!");
     }
@@ -17,10 +17,10 @@ export const userUpdate = async (req, res, next) => {
     if (req.body.password) {
       req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
-    console.log(req.user.id);
+    // console.log(req.user.id);
 
-    console.log(req.user);
-    console.log(req.body);
+    // console.log(req.user);
+    // console.log(req.body);
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       {
@@ -33,8 +33,6 @@ export const userUpdate = async (req, res, next) => {
       },
       { new: true }
     );
-    console.log("hi");
-    console.log("hi");
     const { password, ...info } = updatedUser._doc;
     res
       .status(200)
@@ -54,7 +52,6 @@ export const deleteUser = async (req, res, next) => {
   } catch (error) {
     throw new ApiError(500, "something wents wrong!!");
   }
-  console.log(11);
   res.clearCookie("access_token");
   res.status(200).json(new ApiResponse(200, "User deleted Successfully"));
 };

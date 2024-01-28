@@ -23,9 +23,11 @@ app.listen(3000, () => {
 //importing routers
 import userRouter from "./routes/user.route.js";
 import auth from "./routes/auth.route.js";
+import listingRouter from "./routes/listing.route.js";
 
 app.use("/api/user", userRouter);
 app.use("/api/auth", auth);
+app.use("/api/listing", listingRouter);
 
 app.use(function (err, req, res, next) {
   const statusCode = err.statusCode || 500;
