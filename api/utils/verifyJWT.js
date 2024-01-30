@@ -1,7 +1,7 @@
 import { ApiError } from "./ApiError.js";
 import jwt from "jsonwebtoken";
 
-export const verifyJWT = (req, _, next) => {
+export const verifyJWT = (req, res, next) => {
   const token = req.cookies.access_token;
 
   if (!token) throw new ApiError(400, "You need to signedIn");

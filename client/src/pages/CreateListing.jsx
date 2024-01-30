@@ -1,0 +1,292 @@
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { useState } from "react";
+import { app } from "../firebase";
+
+function CreateListing() {
+  const [file, setFile] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
+  const [fileUploadError, setFileUploadError] = useState(null);
+  const [formData, setFormData] = useState({});
+  console.log(file);
+  console.log(formData);
+  console.log(fileUploadError);
+
+  const handleFileUploads = async () => {
+    const totalFile =
+      file.length + formData.length ? formData?.imageUrls?.length : 0;
+
+    if (file.length >= 0 && totalFile < 7) {
+      setUploading(true);
+      setFileUploadError(false);
+
+      const promises = [];
+
+      for (let i = 0; i < file.length; i++) {
+        promises.push(handleFileUpload(file[i]));
+      }
+
+      Promise.all(promises)
+        .then((urls) => {
+          let h;
+          if (formData?.imageUrls) h = formData.imageUrls.concat(urls);
+          else h = urls;
+          setFormData({
+            ...formData,
+            imageUrls: h,
+          });
+          setFileUploadError(null);
+          setUploading(false);
+        })
+        .catch((err) => {
+          setFileUploadError(
+            "File upload Error!! You can only upload file upto 6 mb"
+          );
+          setUploading(false);
+        });
+    } else {
+      setFileUploadError("You can upload upto 6 images per listing!!");
+      setUploading(false);
+    }
+  };
+
+  const handleFileUpload = (file) => {
+    // console.log(file);
+    return new Promise((resolve, reject) => {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // console.log(snapshot);
+        },
+        (error) => {
+          console.error("Error uploading file:", error);
+          reject(error);
+        },
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(url);
+        }
+      );
+    });
+  };
+
+  function handleInput(e) {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  }
+  function handleDelete(index) {
+    console.log(index);
+    let imageUrls = formData.imageUrls.filter((_, i) => index !== i);
+    console.log(imageUrls);
+    setFormData({ ...formData, imageUrls });
+  }
+
+  return (
+    <div>
+      <h1 className="text-center font-semibold text-3xl mt-7">
+        Create a Listing
+      </h1>
+      <div className="grid grid-cols-1  sm:grid-cols-2 gap-8">
+        <div className="sm:ml-auto sm:mr-0 flex flex-col gap-5 mt-7 mx-auto">
+          <input
+            className="text-sm p-2 w-90 rounded-lg shadow-sm"
+            required
+            id="name"
+            maxLength="62"
+            minLength="10"
+            type="text"
+            placeholder="Name..."
+            onChange={(e) => handleInput(e)}
+          />
+          <textarea
+            className="text-sm p-2 w-90 rounded-lg shadow-sm"
+            placeholder="Description..."
+            id="description..."
+            required
+            onChange={(e) => handleInput(e)}
+          />
+          <input
+            className="text-sm p-2 w-90 rounded-lg shadow-sm"
+            type="text"
+            placeholder="Address"
+            required
+            id="address..."
+            onChange={(e) => handleInput(e)}
+          />
+          <div className="flex flex-wrap gap-5">
+            <p className="flex gap-2">
+              <input
+                type="checkbox"
+                className="w-5 aspect-square"
+                id="sale"
+                onChange={(e) => handleInput(e)}
+              />
+              <span>Sell</span>
+            </p>
+            <p className="flex gap-2">
+              <input
+                className="w-5 aspect-square"
+                type="checkbox"
+                id="rent"
+                onChange={(e) => handleInput(e)}
+              />
+              <span>Rent</span>
+            </p>
+            <p className="flex gap-2">
+              <input
+                type="checkbox"
+                className="w-5 aspect-square"
+                id="parking"
+                onChange={(e) => handleInput(e)}
+              />
+              <span>Parking spot</span>
+            </p>
+            <p className="flex gap-2">
+              <input
+                type="checkbox"
+                className="w-5 aspect-square"
+                id="furnished"
+                onChange={(e) => handleInput(e)}
+              />
+              <span>Furnished</span>
+            </p>
+            <p className="flex gap-2">
+              <input
+                type="checkbox"
+                className="w-5 aspect-square"
+                id="offer"
+                onChange={(e) => handleInput(e)}
+              />
+              <span>Offer</span>
+            </p>
+          </div>
+          <div className="flex gap-5">
+            <p className="flex gap-2 items-center">
+              <input
+                type="Number"
+                id="bedrooms"
+                min="1"
+                max="10"
+                required
+                className="p-2 rounded-lg"
+                onChange={(e) => handleInput(e)}
+              />
+              <span>Beds</span>
+            </p>
+            <p className="flex gap-2 items-center">
+              <input
+                type="Number"
+                id="bathrooms"
+                min="1"
+                max="10"
+                required
+                className="p-2 rounded-lg"
+                onChange={(e) => handleInput(e)}
+              />
+              <span>Parking spot</span>
+            </p>
+          </div>
+          <p className="flex gap-4 items-center">
+            <input
+              className="w-40 rounded-md h-10 "
+              type="text"
+              onChange={(e) => handleInput(e)}
+            />
+            <div className="flex flex-col items-center">
+              <span>Regular price</span>
+              <span>($/month)</span>
+            </div>
+          </p>
+          <p className="flex gap-4 items-center">
+            <input
+              className="w-40 rounded-md h-10"
+              type="text"
+              onChange={(e) => handleInput(e)}
+            />
+            <div className="flex flex-col items-center">
+              <span>Discounted price</span>
+              <span>($/month)</span>
+            </div>
+          </p>
+        </div>
+        <div className="mx-auto  sm:ml-0 flex flex-col gap-5 mt-7  sm:mr-auto">
+          <p>
+            <span>
+              <strong>Images:</strong>
+            </span>{" "}
+            The first image will be the cover(max 6)
+          </p>
+          <div className="space-y-2 mr-auto">
+            <div className="flex gap-2 w-50 ">
+              <input
+                accept="image/*"
+                multiple
+                id="images"
+                type="file"
+                className=" rounded-lg border-gray-300 border p-4"
+                onChange={(e) => {
+                  setFile(e.target.files);
+                  setFileUploadError(null);
+                }}
+              ></input>
+              <p
+                className=" border-2 rounded-lg text-lg font-semibold text-green-700 border-green-700 cursor-pointer p-4 hover:text-green-800 
+                hover:shadow-md
+                hover:border-green-800 uppercase"
+                onClick={(e) => handleFileUploads(e)}
+                type="button"
+              >
+                {uploading ? "uploading..." : "upload"}
+              </p>
+            </div>
+
+            <div>
+              {fileUploadError && (
+                <p className="text-red-700">{fileUploadError}</p>
+              )}
+
+              <ul className="flex flex-col gap-8 ">
+                {formData.imageUrls &&
+                  formData.imageUrls.map((url, index) => (
+                    <li
+                      className="flex justify-between items-center border p-3 px-8"
+                      key={url}
+                    >
+                      <img
+                        className="w-10 rounded-lg "
+                        src={url}
+                        alt="listing images"
+                      />
+                      <button
+                        className="text-red-500 text-xl hover:text-red-600 cursor-pointer"
+                        onClick={() => {
+                          handleDelete(index);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+            <div className="bg-green-700 uppercase  disabled:opacity-80 cursor-pointer hover:opacity-90 p-3 text-center  rounded-lg font-semibold text-white self-cent">
+              Create Listing
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default CreateListing;

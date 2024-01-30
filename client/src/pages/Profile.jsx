@@ -28,6 +28,7 @@ function Profile() {
   const [formData, setFormData] = useState({});
   const fileref = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   console.log(formData);
   // console.log(file);
   // console.log(filePerc);
@@ -41,10 +42,13 @@ function Profile() {
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
     //tell which storage we are talking about
+    //take reference of storage/root reference
+
     const fileName = new Date().getTime() + file;
     //name the file
-    const storageRef = ref(storage, fileName);
 
+    const storageRef = ref(storage, fileName);
+    //take reference of file
     const uploadTask = uploadBytesResumable(storageRef, file);
     //uploadBytesResumable gives us the percentage upload too
 
@@ -171,10 +175,17 @@ function Profile() {
           onChange={(e) => handleChange(e)}
         />
         <button
+          disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg hover:opacity-90 disabled:opacity-80"
           onClick={(e) => handleSubmit(e)}
         >
           {loading ? "Loading..." : "Update"}
+        </button>
+        <button
+          className="bg-green-700 text-white p-3 rounded-lg hover:opacity-90 disabled:opacity-80"
+          onClick={() => navigate("/create-listing")}
+        >
+          Create Listing
         </button>
         <div className="flex justify-between text-red-700 ">
           <p className="cursor-pointer" onClick={() => handleDelete()}>
