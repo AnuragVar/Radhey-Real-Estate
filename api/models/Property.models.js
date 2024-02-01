@@ -44,9 +44,8 @@ const propertySchema = new mongoose.Schema(
     },
     discountPrice: {
       type: Number,
-      required: true,
     },
-    imageURLs: [
+    imageUrls: [
       {
         type: String,
         required: true,
@@ -55,6 +54,7 @@ const propertySchema = new mongoose.Schema(
     userRef: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
+      required: true,
     },
   },
 

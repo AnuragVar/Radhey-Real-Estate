@@ -1,0 +1,1 @@
+createlisting.jsx - no. of photos to be upload is going above 6 also

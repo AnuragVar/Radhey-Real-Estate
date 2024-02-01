@@ -4,6 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 export const createListing = async (req, res, next) => {
   try {
+    console.log(req.user);
+    console.log(req.body);
     const {
       name,
       description,
@@ -16,19 +18,15 @@ export const createListing = async (req, res, next) => {
       bathrooms,
       discountPrice,
       regularPrice,
+      userRef,
+      imageUrls,
     } = req.body;
 
     if ([name, description, address].some((field) => field.trim() === "")) {
       throw new ApiError(400, "Name,Description and Address are required!!");
     }
-    if (!type)
-      throw new ApiError(
-        400,
-        "Atleast one amoung sell or rent field is required!!"
-      );
-
+    console.log(imageUrls);
     const property = await Property.create({
-      regularPrice,
       name,
       description,
       address,
@@ -40,9 +38,9 @@ export const createListing = async (req, res, next) => {
       bathrooms,
       discountPrice,
       regularPrice,
+      userRef,
+      imageUrls,
     });
-
-    await property.save();
 
     res
       .status(200)
@@ -50,6 +48,6 @@ export const createListing = async (req, res, next) => {
         new ApiResponse(200, property, "Property is listed successfully!!")
       );
   } catch (error) {
-    throw new ApiError(500, error?.message);
+    next(error);
   }
 };
