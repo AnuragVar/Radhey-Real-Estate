@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   getDownloadURL,
   getStorage,
+  list,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
@@ -29,6 +30,10 @@ function Profile() {
   const fileref = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [showListings, setShowListing] = useState(false);
+  const [listing, setListing] = useState([]);
+  const [showListingsError, setShowListingsError] = useState(false);
   console.log(formData);
   // console.log(file);
   // console.log(filePerc);
@@ -126,6 +131,26 @@ function Profile() {
       dispatch(updateFailure(error.message));
     }
   }
+  async function handleShowListings() {
+    try {
+      setShowListingsError(false);
+      if (showListings === false) {
+        const res = await fetch(`/api/listing/listings/${currentUser._id}`, {
+          method: "GET",
+        });
+        const data = await res.json();
+        console.log(data);
+
+        setListing(data.data);
+        setShowListing(true);
+      } else {
+        setShowListing(false);
+      }
+      setShowListingsError(false);
+    } catch (error) {
+      setShowListingsError(error);
+    }
+  }
 
   return (
     <div className="">
@@ -197,7 +222,46 @@ function Profile() {
         </div>
         {error && <p className="text-red-700 text-lg">{error}</p>}
       </form>
+      <p
+        onClick={() => handleShowListings()}
+        className="text-center text-slate-600 cursor-pointer hover:text-slate-800"
+      >
+        Show Listings
+      </p>
+      {setShowListingsError && (
+        <p className="text-red-600 ">{showListingsError}</p>
+      )}
+      {showListings && (
+        <div className="flex flex-col justify-center items-center gap-4">
+          {listing && (
+            <div>
+              <h3 className="text-2xl p-4">Your listings</h3>
+              <ul className="flex flex-col gap-3">
+                {listing.map((item) => (
+                  <Item item={item} key={item.id} />
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
     </div>
+  );
+}
+function Item({ item }) {
+  return (
+    <li className="flex gap-5 items-center border-2 p-3 px-5 rounded-lg">
+      <img
+        src={item?.imageUrls[0]}
+        alt="property's image"
+        className="w-20 h-15 rounded-lg"
+      />
+      <p className="font-semibold hover:underline truncate">{item.name}</p>
+      <div className="flex flex-col">
+        <button className="text-red-600 uppercase">Delete</button>
+        <button className="text-green-700 uppercase">EDIT</button>
+      </div>
+    </li>
   );
 }
 

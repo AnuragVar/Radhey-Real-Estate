@@ -123,6 +123,13 @@ function CreateListing() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
+      if (formData.imageUrls.length < 1) {
+        return setError("At least one image is required!!");
+      }
+
+      if (formData.regularPrice < formData.discountPrice) {
+        return setError("Discount Price should be lower than Regular Price!!");
+      }
       setLoading(true);
       setError(false);
       console.log(formData);
@@ -361,7 +368,7 @@ function CreateListing() {
             >
               {loading ? "listing..." : "Create Listing"}
             </button>
-            {error && <p className="text-red-700">{error.message}</p>}
+            {error && <p className="text-red-700">{error}</p>}
           </div>
         </div>
       </form>
