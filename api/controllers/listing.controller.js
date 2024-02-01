@@ -51,3 +51,22 @@ export const createListing = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getListings = async (req, res, next) => {
+  try {
+    console.log(req.user.id, req.params.id);
+    if (req.user.id !== req.params.id) {
+      throw new ApiError(401, "Unauthorized Access!!");
+    }
+
+    const listings = await Property.find({ userRef: req.params.id });
+    console.log(listings);
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, listings, "listings are successfully fetched!!")
+      );
+  } catch (error) {
+    next(error);
+  }
+};
