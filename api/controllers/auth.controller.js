@@ -95,17 +95,19 @@ export const signIn = async function (req, res, next) {
 export const signInThroughGoogle = async (req, res, next) => {
   try {
     const { userName, email, photo } = req.body;
-
+    console.log(userName, email, photo);
     const existedUser = await User.findOne({
       email,
     });
+    console.log(2);
     if (existedUser) {
       const token = jwt.sign(
         { id: existedUser._id },
         process.env.JWT_SECRET_TOKEN,
         { expiresIn: "2d" }
       );
-
+      console.log(existedUser);
+      console.log(3);
       const { password, ...info } = existedUser._doc;
 
       res
@@ -141,7 +143,7 @@ export const signInThroughGoogle = async (req, res, next) => {
         .json(new ApiResponse(200, info, "user is logged successfully"));
     }
   } catch (error) {
-    throw new ApiError(500, error?.message);
+    next(error);
   }
 };
 

@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   getDownloadURL,
   getStorage,
-  list,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
@@ -151,6 +150,23 @@ function Profile() {
       setShowListingsError(error);
     }
   }
+  const [errorDeleting, setErrorDeleting] = useState(false);
+
+  async function handleDeleteListing(id) {
+    setErrorDeleting(false);
+    const res = await fetch(`/api/listing/delete/${id}`, {
+      method: "DELETE",
+    });
+    console.log(res);
+    const data = await res.json();
+    console.log(data);
+    if (data.success === false) {
+      setErrorDeleting(data.data);
+      return;
+    }
+    setErrorDeleting(false);
+    setListing(listing.filter((item) => item._id !== id));
+  }
 
   return (
     <div className="">
@@ -231,36 +247,54 @@ function Profile() {
       {setShowListingsError && (
         <p className="text-red-600 ">{showListingsError}</p>
       )}
-      {showListings && (
+      {showListings && listing.length > 0 && (
         <div className="flex flex-col justify-center items-center gap-4">
-          {listing && (
-            <div>
-              <h3 className="text-2xl p-4">Your listings</h3>
-              <ul className="flex flex-col gap-3">
-                {listing.map((item) => (
-                  <Item item={item} key={item.id} />
+          <div>
+            <h3 className="text-2xl p-4">Your listings</h3>
+            <ul className="flex flex-col gap-3">
+              {listing &&
+                listing.map((item) => (
+                  <Item
+                    errorDeleting={errorDeleting}
+                    handleDeleteListing={handleDeleteListing}
+                    item={item}
+                    key={item._id}
+                  />
                 ))}
-              </ul>
-            </div>
-          )}
+            </ul>
+          </div>
         </div>
       )}
     </div>
   );
 }
-function Item({ item }) {
+function Item({ item, errorDeleting, handleDeleteListing }) {
   return (
-    <li className="flex gap-5 items-center border-2 p-3 px-5 rounded-lg">
-      <img
-        src={item?.imageUrls[0]}
-        alt="property's image"
-        className="w-20 h-15 rounded-lg"
-      />
-      <p className="font-semibold hover:underline truncate">{item.name}</p>
+    <li className="flex justify-between  items-center border-2 p-3 px-5 rounded-lg  container mx-auto">
+      <div className=" overflow-hidden flex gap-2 items-center">
+        <Link to={`/listing/${item._id}`}>
+          <img
+            src={item?.imageUrls[0]}
+            alt="property's image"
+            className="w-16 h-14 rounded-lg object-cover"
+          />
+        </Link>
+        <Link to={`/listing/${item._id}`}>
+          <p className="font-semibold hover:underline truncate flex-1">
+            {item.name}
+          </p>
+        </Link>
+      </div>
       <div className="flex flex-col">
-        <button className="text-red-600 uppercase">Delete</button>
+        <button
+          className="text-red-600 uppercase"
+          onClick={() => handleDeleteListing(item._id)}
+        >
+          Delete
+        </button>
         <button className="text-green-700 uppercase">EDIT</button>
       </div>
+      {errorDeleting && <p className="text-red-600">{errorDeleting}</p>}
     </li>
   );
 }
