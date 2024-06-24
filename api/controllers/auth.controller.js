@@ -8,12 +8,12 @@ const options = {
   httpOnly: true,
   secure: true,
 };
+
 const signup = async function (req, res, next) {
   try {
     const { userName, email, password } = req.body;
 
     if ([userName, email, password].some((field) => !field?.trim())) {
-      console.log(2);
       throw new ApiError(400, "All fields are required!!");
     }
     //all fields are required

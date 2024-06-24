@@ -64,3 +64,11 @@ export const signOut = (req, res, next) => {
     .status(200)
     .json(new ApiResponse(200, "User is logged out successfully!!"));
 };
+
+export const getUser = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) throw new ApiError(404, "User doesn't exist!!");
+
+  console.log("what", user);
+  res.status(200).json(new ApiResponse(200, user));
+};

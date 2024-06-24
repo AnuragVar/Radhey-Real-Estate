@@ -4,15 +4,20 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { app } from "../firebase";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-function CreateListing() {
+function EditListing() {
+  const navigate = useNavigate();
+  const params = useParams();
+
   const [file, setFile] = useState([]);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
+
   const { currentUser } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -32,8 +37,28 @@ function CreateListing() {
     imageUrls: [],
   });
 
-  const navigate = useNavigate();
+  useEffect(
+    function () {
+      const getLisiting = async () => {
+        try {
+          console.log(params.id);
+          const res = await fetch(`/api/listing/getlisting/${params.id}`, {
+            method: "GET",
+          });
 
+          const data = await res.json();
+          if (data.success == false) {
+            console.log("Something went wrong while fetching data!!");
+          }
+          setFormData(data.data);
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+      getLisiting();
+    },
+    [params.id]
+  );
   const handleFileUploads = async () => {
     let totalFile = file.length;
     if (formData.length && formData?.imageUrls && formData.imageUrls?.length)
@@ -133,12 +158,12 @@ function CreateListing() {
       setLoading(true);
       setError(false);
       console.log(formData);
-      const res = await fetch(`/api/listing/create`, {
-        method: "POST",
+      const res = await fetch(`/api/listing/edit/${params.id}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...formData, userRef: currentUser._id }),
+        body: JSON.stringify(formData),
       });
       const data = await res.json();
       setLoading(false);
@@ -155,9 +180,7 @@ function CreateListing() {
   }
   return (
     <div>
-      <h1 className="text-center font-semibold text-3xl mt-7">
-        Create a Listing
-      </h1>
+      <h1 className="text-center font-semibold text-3xl mt-7">Edit Listing</h1>
       <form
         onSubmit={(e) => handleSubmit(e)}
         className="grid grid-cols-1  sm:grid-cols-2 gap-8"
@@ -170,7 +193,7 @@ function CreateListing() {
             maxLength="60"
             minLength="10"
             type="text"
-            placeholder="Name"
+            placeholder="name"
             onChange={(e) => handleInput(e)}
             value={formData.name}
           />
@@ -323,8 +346,8 @@ function CreateListing() {
               ></input>
               <p
                 className=" border-2 rounded-lg text-lg font-semibold text-green-700 border-green-700 cursor-pointer p-4 hover:text-green-800 
-                hover:shadow-md
-                hover:border-green-800 uppercase"
+                      hover:shadow-md
+                      hover:border-green-800 uppercase"
                 onClick={(e) => handleFileUploads(e)}
                 type="button"
               >
@@ -366,7 +389,7 @@ function CreateListing() {
               className="bg-green-700 uppercase  disabled:opacity-80 cursor-pointer hover:opacity-90 p-3 text-center  rounded-lg font-semibold text-white self-center"
               disabled={loading || uploading}
             >
-              {loading ? "listing..." : "Create Listing"}
+              {loading ? "Editing List..." : "Edit Listing"}
             </button>
             {error && <p className="text-red-700">{error}</p>}
           </div>
@@ -376,4 +399,4 @@ function CreateListing() {
   );
 }
 
-export default CreateListing;
+export default EditListing;

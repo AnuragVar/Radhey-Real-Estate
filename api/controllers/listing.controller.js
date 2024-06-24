@@ -62,10 +62,10 @@ export const getListings = async (req, res, next) => {
     }
 
     const listings = await Property.find({ userRef: req.params.id });
-    // console.log(listings);
+    console.log(listings);
     if (!listings) {
-      next("error");
       console.log(3);
+      next("error");
     }
     res
       .status(200)
@@ -100,6 +100,20 @@ export const deleteList = async (req, res, next) => {
     return res
       .status(200)
       .json(new ApiResponse(200, "List deleted successfully!!"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getListing = async (req, res, next) => {
+  try {
+    console.log("hi");
+    const listing = await Property.findById(req.params.id);
+    if (!listing) {
+      return next(errorHandler(404, "Listing not found"));
+    }
+    console.log(listing);
+    res.status(200).json(listing);
   } catch (error) {
     next(error);
   }
