@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useRouteLoaderData } from "react-router-dom";
+import ListingItem from "../components/ListingItem.jsx";
 
 function Search() {
   const [sideBarData, setSideBarData] = useState({
@@ -12,9 +13,9 @@ function Search() {
     order: "desc",
   });
   const navigate = useNavigate();
-  const [lisitngs, setListings] = useState([]);
+  const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(false);
-  console.log(sideBarData);
+  const [showMore, setShowMore] = useState(1);
 
   useEffect(
     function () {
@@ -53,7 +54,6 @@ function Search() {
         const searchQuery = urlParams.toString();
         const res = await fetch(`/api/listing/getlistings?${searchQuery}`);
         const data = await res.json();
-        console.log(data);
         setListings(data.data);
         setLoading(false);
       };
@@ -107,13 +107,25 @@ function Search() {
 
     navigate(`/search?${searchQuery}`);
   };
+
+  const onShowMoreClick = async () => {
+    const numberOfListings = listings.length;
+    const startIndex = numberOfListings;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set('startIndex',startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/listing/getlistings?{searchQuery}`)
+    const data = await res.json();
+    if(data.length<9){
+      setShowMore(false);
+    }
+    setListings({...listings, ...data});
+  };
+
   return (
-    <div>
-      <div className="flex flex-col md:flex-row">
-        <form
-          onSubmit={handleSubmit}
-          className="p-7 border-b-2 flex flex-col gap-5"
-        >
+    <div className="flex flex-col md:flex-row">
+      <div className=" p-7 border-b-2 sm:border-r-2 md:min-h-screen">
+        <form onSubmit={handleSubmit} className=" flex flex-col gap-5">
           <div className="flex gap-3 items-center">
             <label className="whitespace-nowrap font-semibold">
               Search Term
@@ -212,7 +224,37 @@ function Search() {
           </button>
           <div></div>
         </form>
-        <div className="font-semibold text-3xl p-7">Listing results:</div>
+      </div>
+      <div>
+        <h1 className="font-semibold text-3xl p-3 text-slate-700">
+          Listing results:
+        </h1>
+        <div className="p-7 flex flex-wrap gap-4">
+          {console.log(listings)}
+          {console.log(loading)}
+          {!loading && listings.length === 0 && (
+            <p className="text-xl text-slate-700">No Listing Found!!</p>
+          )}
+          {loading && (
+            <p className="text-xl text-slate-700 text-center w-full">
+              Loading...
+            </p>
+          )}
+          {!loading &&
+            listings &&
+            listings.map((listing) => (
+              <ListingItem listing={listing} key={listing} />
+            ))}
+          {showMore && (
+            <button
+              onClick={() => {
+                onShowMoreClick();
+              }}
+            >
+              showMore
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
