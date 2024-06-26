@@ -9,6 +9,7 @@ import PrivateRoute from "./pages/PrivateRoute.jsx";
 import CreateListing from "./pages/CreateListing.jsx";
 import EditListing from "./pages/EditListing.jsx";
 import GetListing from "./pages/GetListing.jsx";
+import Search from "./pages/Search.jsx";
 // import VideoShow from "./pages/VideoShow.jsx";
 // import VideoShowLoop from "./pages/VideoShowLoop.jsx";
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/search" element={<Search />} />
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/create-listing" element={<CreateListing />} />

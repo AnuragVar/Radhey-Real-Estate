@@ -12,6 +12,6 @@ router.route("/create").post(verifyJWT, createListing);
 router.route("/listings/:id").get(verifyJWT, getListings);
 router.route("/delete/:id").delete(verifyJWT, deleteList);
 router.route("/getlisting/:id").get(getListing);
-router.route("/getListings").get(getAllListings);
+router.route("/getlistings").get(getAllListings);
 
 export default router;
