@@ -15,7 +15,7 @@ function Search() {
   const navigate = useNavigate();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showMore, setShowMore] = useState(1);
+  const [showMore, setShowMore] = useState(true);
 
   useEffect(
     function () {
@@ -55,6 +55,9 @@ function Search() {
         const res = await fetch(`/api/listing/getlistings?${searchQuery}`);
         const data = await res.json();
         setListings(data.data);
+        if (data.data.length < 9) {
+          setShowMore(false);
+        }
         setLoading(false);
       };
       fetchListings();
@@ -112,14 +115,21 @@ function Search() {
     const numberOfListings = listings.length;
     const startIndex = numberOfListings;
     const urlParams = new URLSearchParams(location.search);
-    urlParams.set('startIndex',startIndex);
+    console.log(urlParams);
+    urlParams.set("startIndex", startIndex);
     const searchQuery = urlParams.toString();
-    const res = await fetch(`/api/listing/getlistings?{searchQuery}`)
+    console.log(searchQuery);
+    const res = await fetch(`/api/listing/getlistings?${searchQuery}`);
     const data = await res.json();
-    if(data.length<9){
+    console.log(data.data.length);
+    if (data.data.length < 9) {
+      console.log("hi");
       setShowMore(false);
     }
-    setListings({...listings, ...data});
+    console.log("hi");
+    console.log(data.data);
+    setListings([...listings, ...data.data]);
+    console.log(listings);
   };
 
   return (
@@ -240,13 +250,17 @@ function Search() {
               Loading...
             </p>
           )}
+
           {!loading &&
             listings &&
             listings.map((listing) => (
               <ListingItem listing={listing} key={listing} />
             ))}
+        </div>
+        <div>
           {showMore && (
             <button
+              className="text-green-700 underline p-7 pt-0"
               onClick={() => {
                 onShowMoreClick();
               }}
