@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import SimpleImageSlider from "react-simple-image-slider";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
@@ -15,7 +14,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Contact from "../components/Contact";
 import { useSelector } from "react-redux";
-import { list } from "firebase/storage";
 import { FaShare } from "react-icons/fa";
 
 function GetListing() {
@@ -25,8 +23,6 @@ function GetListing() {
   const [loading, setLoading] = useState(false);
   const [contactFormOpen, setContactFormOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
-  //   const [images, setImages] = useState([]);
-  //   console.log(images);
 
   const params = useParams();
   useEffect(
@@ -54,7 +50,6 @@ function GetListing() {
         } catch (error) {
           setError(true);
           setLoading(false);
-          // console.log(error.message);
         }
       };
       getLisiting();

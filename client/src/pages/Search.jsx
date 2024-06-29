@@ -265,7 +265,7 @@ function Search() {
                 onShowMoreClick();
               }}
             >
-              showMore
+              Show More
             </button>
           )}
         </div>

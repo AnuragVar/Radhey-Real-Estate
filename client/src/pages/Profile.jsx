@@ -33,11 +33,7 @@ function Profile() {
   const [showListings, setShowListing] = useState(false);
   const [listing, setListing] = useState([]);
   const [showListingsError, setShowListingsError] = useState(false);
-  console.log(formData);
-  // console.log(file);
-  // console.log(filePerc);
-  // console.log(fileUploadError);
-  // console.log(formData);
+  
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
