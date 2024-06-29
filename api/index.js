@@ -14,6 +14,7 @@ mongoose
     console.log("Error is: ", err);
   });
 
+const __dirname = path.resolve();
 app.use(express.json());
 app.use(cookieParser());
 app.listen(3000, () => {
@@ -29,6 +30,12 @@ app.use("/api/user", userRouter);
 app.use("/api/auth", auth);
 app.use("/api/listing", listingRouter);
 
+app.use(express.static(path.join(__dirname, "/client/dist")));
+
+app.get('*',(req,res)=>{
+  res.sendFile(path.join(__dirname,'client','dist','index.html')) 
+  //if any other route is stricked, it will run index.html in dist in client
+})
 app.use(function (err, req, res, next) {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
