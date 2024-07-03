@@ -152,7 +152,15 @@ export const getAllListings = async (req, res, next) => {
     const sort = req.query.sort || "createdAt";
 
     const order = req.query.order || "desc";
-    console.log(1);
+
+    const sortObj = {};
+    if (sort === "price") {
+      sortObj["regularPrice"] = order;
+    } else {
+      sortObj[sort] = order;
+    }
+
+    // console.log(1);
     const listings = await Property.find({
       name: { $regex: searchTerm, $options: "i" },
       offer,
@@ -160,7 +168,7 @@ export const getAllListings = async (req, res, next) => {
       type,
       parking,
     })
-      .sort({ [sort]: order })
+      .sort(sortObj)
       .limit(limit)
       .skip(startIndex);
     console.log(2);

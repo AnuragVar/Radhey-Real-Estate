@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import cookieParser from "cookie-parser";
 const app = express();
+import path from "path";
 
 mongoose
   .connect(process.env.MONGODB)
@@ -32,10 +33,10 @@ app.use("/api/listing", listingRouter);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));
 
-app.get('*',(req,res)=>{
-  res.sendFile(path.join(__dirname,'client','dist','index.html')) 
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
   //if any other route is stricked, it will run index.html in dist in client
-})
+});
 app.use(function (err, req, res, next) {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";

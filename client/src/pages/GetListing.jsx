@@ -101,15 +101,18 @@ function GetListing() {
               }}
             />
           </div>
-          <div className=" md:px-40 px-20 py-10">
-            {listing.offer && (
-              <h1 className="bg-red-300  font-semibold text-3xl py-5 max-w-[200px] w-full">
-                {listing.name} - $
-                {listing?.discountPrice
-                  ? listing.discountPrice
-                  : listing.regularPrice}
-              </h1>
-            )}
+          <div className=" md:px-40 px-20 py-10 ">
+            <div className="flex flex-col gap-4">
+              <h2 className="text-3xl font-bold ">{listing.name}</h2>
+              {listing.offer && (
+                <h1 className="bg-red-800  font-semibold text-lg text-white justify-center py-1 px-5 max-w-[200px] w-full rounded-md text-center">
+                  Cost - $
+                  {listing?.discountPrice
+                    ? listing.discountPrice
+                    : listing.regularPrice}
+                </h1>
+              )}
+            </div>
 
             <p className="py-3 text-md text-green-900">
               <span>
