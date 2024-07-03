@@ -51,6 +51,7 @@ function EditListing() {
             console.log("Something went wrong while fetching data!!");
           }
           setFormData(data.data);
+          console.log(data);
         } catch (error) {
           console.log(error.message);
         }
@@ -167,7 +168,7 @@ function EditListing() {
       });
       const data = await res.json();
       setLoading(false);
-
+      console.log(data);
       if (data.success === false) {
         setError(data.message);
       }
@@ -304,7 +305,7 @@ function EditListing() {
             />
             <div className="flex flex-col items-center">
               <span>Regular price</span>
-              <span>($/month)</span>
+              {formData.type === "rent" && <span>($/month)</span>}
             </div>
           </p>
           <p className="flex gap-4 items-center">
@@ -319,7 +320,7 @@ function EditListing() {
             {formData.offer && (
               <div className="flex flex-col items-center">
                 <span>Discounted price</span>
-                <span>($/month)</span>
+                {formData.type === "rent" && <span>($/month)</span>}
               </div>
             )}
           </p>

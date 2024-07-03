@@ -33,7 +33,7 @@ function Profile() {
   const [showListings, setShowListing] = useState(false);
   const [listing, setListing] = useState([]);
   const [showListingsError, setShowListingsError] = useState(false);
-  
+
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -288,7 +288,12 @@ function Item({ item, errorDeleting, handleDeleteListing }) {
         >
           Delete
         </button>
-        <button className="text-green-700 uppercase">EDIT</button>
+        <Link
+          to={`/edit-listing/${item._id}`}
+          className="text-green-700 uppercase"
+        >
+          EDIT
+        </Link>
       </div>
       {errorDeleting && <p className="text-red-600">{errorDeleting}</p>}
     </li>

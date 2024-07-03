@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 
 export const createListing = async (req, res, next) => {
   try {
+    console.log(1);
     console.log(req.user);
     console.log(req.body);
     const {
@@ -113,7 +114,7 @@ export const getListing = async (req, res, next) => {
       return next(errorHandler(404, "Listing not found"));
     }
     console.log(listing);
-    res.status(200).json(listing);
+    res.status(200).json(new ApiResponse(200,listing,"Listing is successfully fetched!!"));
   } catch (error) {
     next(error);
   }
@@ -182,3 +183,16 @@ export const getAllListings = async (req, res, next) => {
     next(error);
   }
 };
+
+export const editListing = async(req,res,nexy)=>{
+  try {
+    const options = { new: true };
+    const listing = await Property.findOneAndUpdate({ _id: req.params.id },req.body,options);
+    
+    if(!listing) throw new ApiError(500,"Something went wrong !!");
+    
+    res.status(200).json(new ApiResponse(200,listing,"Listing is updated successfully!!"));
+  } catch (error) {
+    next(error);
+  }
+}

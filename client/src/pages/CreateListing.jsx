@@ -142,7 +142,7 @@ function CreateListing() {
       });
       const data = await res.json();
       setLoading(false);
-
+      console.log(data);
       if (data.success === false) {
         setError(data.message);
       }
@@ -281,7 +281,7 @@ function CreateListing() {
             />
             <div className="flex flex-col items-center">
               <span>Regular price</span>
-              <span>($/month)</span>
+              {formData.type === "rent" && <span>($/month)</span>}
             </div>
           </p>
           <p className="flex gap-4 items-center">
@@ -296,7 +296,7 @@ function CreateListing() {
             {formData.offer && (
               <div className="flex flex-col items-center">
                 <span>Discounted price</span>
-                <span>($/month)</span>
+                {formData.type === "rent" && <span>($/month)</span>}
               </div>
             )}
           </p>

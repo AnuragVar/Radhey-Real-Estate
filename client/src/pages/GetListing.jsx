@@ -44,7 +44,7 @@ function GetListing() {
             setError(data.message);
             throw new Error();
           }
-          setListing(data);
+          setListing(data.data);
           setLoading(false);
           setError(false);
         } catch (error) {
@@ -58,7 +58,6 @@ function GetListing() {
   );
 
   function handleContactForm() {
-    console.log(listing.userRef, currentUser, currentUser?._id);
     if (listing.userRef === currentUser._id) {
       return;
     }

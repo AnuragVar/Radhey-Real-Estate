@@ -5,7 +5,8 @@ import {
   getListings,
   deleteList,
   getListing,
-  getAllListings
+  getAllListings,
+  editListing
 } from "../controllers/listing.controller.js";
 const router = express.Router();
 router.route("/create").post(verifyJWT, createListing);
@@ -13,5 +14,6 @@ router.route("/listings/:id").get(verifyJWT, getListings);
 router.route("/delete/:id").delete(verifyJWT, deleteList);
 router.route("/getlisting/:id").get(getListing);
 router.route("/getlistings").get(getAllListings);
+router.route("/edit/:id").patch(editListing);
 
 export default router;
