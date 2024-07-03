@@ -103,15 +103,7 @@ function GetListing() {
           </div>
           <div className=" md:px-40 px-20 py-10 ">
             <div className="flex flex-col gap-4">
-              <h2 className="text-3xl font-bold ">{listing.name}</h2>
-              {listing.offer && (
-                <h1 className="bg-red-800  font-semibold text-lg text-white justify-center py-1 px-5 max-w-[200px] w-full rounded-md text-center">
-                  Cost - $
-                  {listing?.discountPrice
-                    ? listing.discountPrice
-                    : listing.regularPrice}
-                </h1>
-              )}
+              <h2 className="text-3xl font-bold truncate ">{listing.name}</h2>
             </div>
 
             <p className="py-3 text-md text-green-900">
@@ -124,10 +116,28 @@ function GetListing() {
 
               <span className="text-green"> {listing.address}</span>
             </p>
-            <div>
-              <div className="bg-red-800 py-2 my-2 w-60 text-center uppercase font-semibold text-white rounded-lg">
+            <div className="flex gap-2 items-center text-sm sm:text-lg">
+              <div className="bg-red-800 py-2 my-2 w-40 sm:w-60 text-center uppercase font-semibold text-white rounded-lg">
                 For {listing.type}
               </div>
+              <h1 className="bg-red-800  font-semibold  text-white  py-2 px-5 w-40 sm:w-60 rounded-md text-center flex justify-center gap-1">
+                <span className="hidden sm:block">PRICE -</span>
+                {listing?.discountPrice ? (
+                  <div>
+                    <span className="line-through px-1">
+                      ${listing.regularPrice}
+                    </span>
+                    <div className="px-1 flex gap-1 justify-center">
+                      <span>$</span>
+                      <span> {listing.discountPrice}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="px-1 flex gap-1 justify-center">
+                    <span>$</span> <span>{listing.regularPrice}</span>
+                  </div>
+                )}
+              </h1>
             </div>
             <div>
               <strong>Description - </strong>
@@ -158,7 +168,7 @@ function GetListing() {
               )}
             </ul>
             <button
-              className="w-full text-white rounded-lg p-3 text-center text-xl uppercase font-semibold bg-green-900"
+              className="w-full text-white rounded-lg p-3 text-center text-md sm:text-xl uppercase font-semibold bg-green-900"
               onClick={() => handleContactForm()}
             >
               Contact Landlord

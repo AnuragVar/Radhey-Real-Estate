@@ -20,7 +20,7 @@ function Contact({ listing }) {
     [listing.userRef]
   );
   return (
-    <div className="flex flex-col p-10 gap-5">
+    <div className="flex flex-col py-5 sm:py-10 gap-5">
       <div>
         Contact <span className="font-semibold">{landlord?.userName}</span> for{" "}
         <span className="font-semibold">{listing.name}</span>
