@@ -39,6 +39,7 @@ function Profile() {
       handleFileUpload(file);
     }
   }, [file]);
+
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
     //tell which storage we are talking about

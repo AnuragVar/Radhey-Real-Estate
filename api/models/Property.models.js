@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const propertySchema = new mongoose.Schema(
   {
@@ -57,7 +57,6 @@ const propertySchema = new mongoose.Schema(
       required: true,
     },
   },
-
   { timestamps: true }
 );
 

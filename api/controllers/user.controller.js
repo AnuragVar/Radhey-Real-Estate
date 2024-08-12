@@ -59,7 +59,6 @@ export const deleteUser = async (req, res, next) => {
 export const signOut = (req, res, next) => {
   if (req.user.id !== req.params.id)
     throw new ApiError(400, "You don't access to signOut it!!");
-
   res
     .status(200)
     .json(new ApiResponse(200, "User is logged out successfully!!"));

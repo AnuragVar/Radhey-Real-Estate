@@ -5,10 +5,19 @@ const initialState = {
   loading: false,
   currentUser: null,
 };
+
+// export const clearError = (state) => ({
+//   type: "user/clearError",
+//   state.error = null;
+// });
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
     signInStart: (state) => {
       state.loading = true;
       state.error = null;
@@ -93,6 +102,7 @@ export const {
   signOutFailure,
   signOutStart,
   signOutSuccess,
+  clearError,
 } = userSlice.actions;
 
 export default userSlice.reducer;

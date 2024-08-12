@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { signInFailure, signInStart, signInSuccess } from "../redux/userSlice";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+  clearError,
+} from "../redux/userSlice";
 import Oath from "../components/Oath";
 function SignIn() {
   const [formData, setFormData] = useState({});
@@ -15,6 +20,12 @@ function SignIn() {
       [e.target.id]: e.target.value,
     }));
   }
+  useEffect(() => {
+    return () => {
+      dispatch(clearError()); // Clear error when component unmounts
+    };
+  }, [dispatch]);
+
   async function handleSubmit(e) {
     try {
       e.preventDefault();

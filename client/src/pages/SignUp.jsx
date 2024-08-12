@@ -1,13 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { signUpFailure, signUpStart, signUpSuccess } from "../redux/userSlice";
+import {
+  clearError,
+  signUpFailure,
+  signUpStart,
+  signUpSuccess,
+} from "../redux/userSlice";
 function SignUp() {
   const [formData, setFormData] = useState({});
   const { error, loading } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearError()); // Clear error when component unmounts
+    };
+  }, [dispatch]);
 
   function handleChange(e) {
     setFormData((formData) => ({ ...formData, [e.target.id]: e.target.value }));
